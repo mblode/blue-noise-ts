@@ -2,8 +2,8 @@ import { Point } from "./types";
 
 
 function calculateTorusDistance(point1: Point, point2: Point, width: number, height: number): number {
-  const dx = Math.abs(point1.x - point2.x);
-  const dy = Math.abs(point1.y - point2.y);
+  const dx = Math.abs(point1[0] - point2[0]);
+  const dy = Math.abs(point1[1] - point2[1]);
 
   // If the distance is greater than half the grid size, we consider the wraparound distance
   const wrappedDx = Math.min(dx, width - dx);
@@ -15,7 +15,7 @@ function calculateTorusDistance(point1: Point, point2: Point, width: number, hei
 function findNearestTorusDistance(x: number, y: number, points: Point[], width: number, height: number): number {
   let nearestDistance = Number.MAX_VALUE;
   for (const point of points) {
-    const distance = calculateTorusDistance({ x, y }, point, width, height);
+    const distance = calculateTorusDistance([x, y], point, width, height);
     if (distance < nearestDistance) {
       nearestDistance = distance;
     }

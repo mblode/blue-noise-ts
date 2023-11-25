@@ -6,7 +6,7 @@ export const generateTorusDiskPoints = ({ gridWidth, gridHeight, n }: { gridWidt
 
   // TorusDiskSample generator function (simplified from your provided code)
   function* TorusDiskSample(width: number, height: number, n: number) {
-    const k = 13; // maximum number of samples before rejection (use 13 or more for higher quality)
+    const k = 50; // maximum number of samples before rejection (use 13 or more for higher quality)
     const m = 4; // a number mutually prime to k
     const radius2 = (0.69 * (width * height)) / n;
     const radius = Math.sqrt(radius2);
@@ -114,6 +114,6 @@ export const generateTorusDiskPoints = ({ gridWidth, gridHeight, n }: { gridWidt
   const points = Array.from(TorusDiskSample(gridWidth, gridHeight, n));
 
   // Transform the points array to a more convenient format (array of {x, y})
-  return points.map(point => ({ x: point[0], y: point[1] }));
+  return points.map(point => ([point[0], point[1]]));
 }
 

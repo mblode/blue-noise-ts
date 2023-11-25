@@ -3,7 +3,7 @@ import { Buffer } from 'buffer';
 
 // Function to convert an array of normalized distances into an image
 export const createImageFromDistances = async ({ distances, gridWidth, gridHeight, imageBase }: { distances: number[], gridWidth: number, gridHeight: number, imageBase: string }) => {
-  const outputPath = `./output/main/${imageBase}-distance.jpg`;
+  const outputPath = `./output/main/${imageBase}-distance.png`;
   // Ensure the distances are in the range 0-255 and convert them into a Buffer
   const pixelData = Buffer.from(distances.map(value => Math.min(Math.max(value, 0), 255)));
 

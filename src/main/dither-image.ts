@@ -31,7 +31,7 @@ export const processImage = async ({ inputPath, distances, gridWidth, gridHeight
         const bufferIndex = y * width! + x;
 
         // Determine if the pixel value is greater than the distance value
-        outputBuffer[bufferIndex] = rawBuffer[bufferIndex] > distanceValue ? 255 : 0; // black or white
+        outputBuffer[bufferIndex] = rawBuffer[bufferIndex] >= distanceValue ? 255 : 0; // black or white
       }
     }
 
