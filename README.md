@@ -1,5 +1,55 @@
-# Blue Noise in TypeScript
+# Blue Noise Dithering
 
-![f-points](https://github.com/mblode/blue-noise-ts/assets/7183998/be02ae47-3c93-438b-a5fb-4db1a9bbd85c)
-![f-dither](https://github.com/mblode/blue-noise-ts/assets/7183998/a1779f39-397e-4cf8-b183-d65fdb5dfe7e)
-![f-distance](https://github.com/mblode/blue-noise-ts/assets/7183998/305d8064-0a62-4b65-b8b6-2322e46d4275)
+A TypeScript implementation of blue noise dithering for images, inspired by the Rust version.
+
+## Installation
+
+```bash
+npm install
+```
+
+## Usage
+
+The tool uses `noise.png` as the default blue noise texture to dither input images.
+
+### Basic usage
+
+```bash
+npm run dither <input-image>
+```
+
+### With custom colors
+
+```bash
+npm run dither <input-image> -- -f <foreground-hex> -b <background-hex>
+```
+
+### Examples
+
+```bash
+# Black and white (default)
+npm run dither input/claude-shannon-mouse-mit-00.jpg
+
+# Custom colors
+npm run dither input/claude-shannon-mouse-mit-00.jpg -- -f "#ff0000" -b "#ffffff"
+
+# Different noise texture
+npm run dither input/claude-shannon-mouse-mit-00.jpg -- -n custom-noise.png
+```
+
+## CLI Options
+
+- `<input>` - Path to input image (required)
+- `-o, --output <path>` - Output directory (default: "output")
+- `-n, --noise <path>` - Path to blue noise texture (default: "./noise.png")
+- `-f, --foreground <hex>` - Foreground color in hex (default: "#000000")
+- `-b, --background <hex>` - Background color in hex (default: "#ffffff")
+
+## How it works
+
+1. Loads the blue noise texture (`noise.png`) as a grayscale image
+2. Converts the input image to grayscale
+3. For each pixel, compares the input image luminance with the noise texture (tiled if needed)
+4. If the image pixel is brighter than the noise pixel, uses the foreground color; otherwise uses the background color
+
+This creates a dithered effect that preserves the visual information while using only two colors.
