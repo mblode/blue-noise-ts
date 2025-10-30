@@ -1,6 +1,6 @@
 # Blue Noise Dithering
 
-A TypeScript implementation of blue noise dithering for images, inspired by the Rust version.
+A CLI to dither images with blue noise.
 
 ![Dithered profile image](img/matthew-profile-dithered.png)
 
