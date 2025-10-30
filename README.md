@@ -10,7 +10,7 @@ npm install
 
 ## Usage
 
-The tool uses `noise.png` as the default blue noise texture to dither input images.
+The tool uses `blue-noise.png` as the default blue noise texture to dither input images.
 
 ### Basic usage
 
@@ -41,13 +41,13 @@ npm run dither input/claude-shannon-mouse-mit-00.jpg -- -n custom-noise.png
 
 - `<input>` - Path to input image (required)
 - `-o, --output <path>` - Output directory (default: "output")
-- `-n, --noise <path>` - Path to blue noise texture (default: "./noise.png")
+- `-n, --noise <path>` - Path to blue noise texture (default: "./blue-noise.png")
 - `-f, --foreground <hex>` - Foreground color in hex (default: "#000000")
 - `-b, --background <hex>` - Background color in hex (default: "#ffffff")
 
 ## How it works
 
-1. Loads the blue noise texture (`noise.png`) as a grayscale image
+1. Loads the blue noise texture (`blue-noise.png`) as a grayscale image
 2. Converts the input image to grayscale
 3. For each pixel, compares the input image luminance with the noise texture (tiled if needed)
 4. If the image pixel is brighter than the noise pixel, uses the foreground color; otherwise uses the background color
