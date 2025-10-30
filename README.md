@@ -2,6 +2,12 @@
 
 A TypeScript implementation of blue noise dithering for images, inspired by the Rust version.
 
+![Dithered profile image](img/matthew-profile-dithered.png)
+
+## Blue Noise Texture
+
+![Blue noise texture](blue-noise.png)
+
 ## Installation
 
 ```bash
