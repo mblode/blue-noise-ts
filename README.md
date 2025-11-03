@@ -1,12 +1,16 @@
 # Blue Noise Dithering
 
-A CLI to dither images with blue noise.
+A CLI to dither images with blue noise, and generate blue noise textures using the void-and-cluster algorithm.
 
 ![Dithered profile image](img/matthew-profile-dithered.png)
 
-## Blue Noise Texture
+## What is Blue Noise?
+
+Blue noise distributes pixels evenly, avoiding the clusters and voids of white noise and the repetitive patterns of Bayer dithering. The result is natural-looking dithered images that preserve detail without obvious artefacts.
 
 ![Blue noise texture](blue-noise.png)
+
+_64×64 tileable blue noise texture_
 
 ## Installation
 
@@ -16,27 +20,21 @@ npm install
 
 ## Usage
 
-The tool uses `blue-noise.png` as the default blue noise texture to dither input images.
-
-### Basic usage
-
 ```bash
+# Basic usage
 npm run dither <input-image>
-```
 
-### With custom colors
-
-```bash
+# Custom colours
 npm run dither <input-image> -- -f <foreground-hex> -b <background-hex>
 ```
 
 ### Examples
 
 ```bash
-# Black and white (default)
+# Black and white
 npm run dither input/claude-shannon-mouse-mit-00.jpg
 
-# Custom colors
+# Custom colours
 npm run dither input/claude-shannon-mouse-mit-00.jpg -- -f "#ff0000" -b "#ffffff"
 
 # Different noise texture
@@ -45,17 +43,47 @@ npm run dither input/claude-shannon-mouse-mit-00.jpg -- -n custom-noise.png
 
 ## CLI Options
 
+### Dithering Command
+
 - `<input>` - Path to input image (required)
 - `-o, --output <path>` - Output directory (default: "output")
 - `-n, --noise <path>` - Path to blue noise texture (default: "./blue-noise.png")
-- `-f, --foreground <hex>` - Foreground color in hex (default: "#000000")
-- `-b, --background <hex>` - Background color in hex (default: "#ffffff")
+- `-f, --foreground <hex>` - Foreground colour in hex (default: "#000000")
+- `-b, --background <hex>` - Background colour in hex (default: "#ffffff")
+- `-w, --width <pixels>` - Resize image width
+- `-h, --height <pixels>` - Resize image height
+- `-c, --contrast <value>` - Adjust contrast (default: 1.0)
 
-## How it works
+### Generate Command
 
-1. Loads the blue noise texture (`blue-noise.png`) as a grayscale image
-2. Converts the input image to grayscale
-3. For each pixel, compares the input image luminance with the noise texture (tiled if needed)
-4. If the image pixel is brighter than the noise pixel, uses the foreground color; otherwise uses the background color
+```bash
+npm run start generate -- --size 64 --sigma 1.9 --verbose
+```
 
-This creates a dithered effect that preserves the visual information while using only two colors.
+- `-s, --size <pixels>` - Texture size (8-512, default: 64)
+- `--sigma <value>` - Gaussian sigma (1.0-3.0, default: 1.9)
+- `--seed <number>` - Random seed for reproducibility
+- `-v, --verbose` - Show generation progress
+
+## How It Works
+
+Each pixel in the input image is compared against the corresponding blue noise threshold value. If brighter than the threshold, use the background colour; if darker, use the foreground colour. The noise texture tiles seamlessly across the image.
+
+## Generating Blue Noise
+
+Uses the **void-and-cluster algorithm** (Ulichney, 1993): identifies clusters and voids using Gaussian blur, then redistributes pixels until evenly spread. Each pixel gets a rank determining its threshold value.
+
+The texture tiles seamlessly using torus topology. Power-of-two dimensions (64×64, 128×128) use FFT optimisation for ~50% faster generation.
+
+**Performance:** 64×64 in ~2-5s, 128×128 in ~30-60s. Pre-generate textures for production use.
+
+## References
+
+- [Void-and-cluster method for dither array generation](https://doi.org/10.1117/12.152707) - Ulichney (1993)
+- [Dithering with blue noise](https://doi.org/10.1109/5.3288) - Ulichney (1988)
+
+## Additional Resources
+
+- [Ditherpunk](https://surma.dev/lab/ditherpunk/) - Interactive dithering playground
+- [Dithering - Part 1](https://visualrambling.space/dithering-part-1/) - Deep dive into dithering techniques
+- [Dither Asteroids](https://dither.blode.co/) - Dithering asteroids game
