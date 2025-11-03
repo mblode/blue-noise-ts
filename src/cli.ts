@@ -3,13 +3,19 @@
 import { Command } from "commander";
 import path from "path";
 import { applyBlueNoiseDither } from "./dither.js";
+import { BlueNoiseGenerator, saveBlueNoiseToPNG } from "./generator.js";
 
 const program = new Command();
 
 program
   .name("blue-noise")
-  .description("Apply blue noise dithering to images")
-  .version("1.0.0")
+  .description("Blue noise dithering and generation tools")
+  .version("1.0.0");
+
+// Dither command (default behavior)
+program
+  .command("dither", { isDefault: true })
+  .description("Apply blue noise dithering to an image")
   .argument("<input>", "Path to input image")
   .option("-o, --output <path>", "Output directory", "output")
   .option(
@@ -61,6 +67,66 @@ program
         contrast,
       });
 
+      console.log("Done!");
+    } catch (error) {
+      console.error("Error:", error instanceof Error ? error.message : error);
+      process.exit(1);
+    }
+  });
+
+// Generate command
+program
+  .command("generate")
+  .description("Generate a blue noise texture using the void-and-cluster algorithm")
+  .option("-s, --size <number>", "Texture size (width and height)", "128")
+  .option("-o, --output <path>", "Output file path", "./blue-noise.png")
+  .option(
+    "--sigma <number>",
+    "Gaussian sigma value (1.5-1.9, higher = more spread)",
+    "1.9",
+  )
+  .option("--seed <number>", "Random seed for reproducibility")
+  .option("-v, --verbose", "Show detailed generation progress", false)
+  .action(async (options: any) => {
+    try {
+      const size = parseInt(options.size, 10);
+      const sigma = parseFloat(options.sigma);
+      const seed = options.seed ? parseInt(options.seed, 10) : undefined;
+      const outputPath = path.resolve(options.output);
+
+      // Validate inputs
+      if (isNaN(size) || size < 8 || size > 512) {
+        throw new Error("Size must be between 8 and 512");
+      }
+      if (isNaN(sigma) || sigma < 1.0 || sigma > 3.0) {
+        throw new Error("Sigma must be between 1.0 and 3.0");
+      }
+
+      if (!options.verbose) {
+        console.log(`Generating ${size}×${size} blue noise texture`);
+        console.log(`Sigma: ${sigma}`);
+        if (seed !== undefined) {
+          console.log(`Seed: ${seed}`);
+        }
+        console.log(`Output: ${outputPath}`);
+        console.log("");
+      }
+
+      // Generate blue noise
+      const generator = new BlueNoiseGenerator({
+        width: size,
+        height: size,
+        sigma,
+        seed,
+        verbose: options.verbose,
+      });
+
+      const result = generator.generate();
+
+      // Save to file
+      await saveBlueNoiseToPNG(result, outputPath);
+
+      console.log("");
       console.log("Done!");
     } catch (error) {
       console.error("Error:", error instanceof Error ? error.message : error);
